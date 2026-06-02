@@ -102,9 +102,10 @@
             background: #fff;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 40px;
+            justify-content: center;
+            padding: 48px 44px;
             border-left: 1px solid var(--border);
+            gap: 32px;
         }
 
         .brand {
@@ -139,11 +140,7 @@
         }
 
         .login-form {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 24px 0
+            padding: 0
         }
 
         .login-form h2 {
