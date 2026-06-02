@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BukuTamuController;
 use App\Http\Controllers\Admin\KategoriTamuController;
 use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Admin\PegawaiController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [TamuPublikController::class, 'index'])->name('home');
@@ -28,5 +29,13 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::patch('/kategori-tamu/{kategoriTamu}', [KategoriTamuController::class, 'update'])->name('kategori-tamu.update');
     Route::delete('/kategori-tamu/{kategoriTamu}', [KategoriTamuController::class, 'destroy'])->name('kategori-tamu.destroy');
 
+    Route::get('/pegawai', [PegawaiController::class, 'index'])->name('pegawai.index');
+    Route::post('/pegawai', [PegawaiController::class, 'store'])->name('pegawai.store');
+    Route::patch('/pegawai/{pegawai}', [PegawaiController::class, 'update'])->name('pegawai.update');
+    Route::patch('/pegawai/{pegawai}/toggle', [PegawaiController::class, 'toggleAktif'])->name('pegawai.toggle');
+    Route::delete('/pegawai/{pegawai}', [PegawaiController::class, 'destroy'])->name('pegawai.destroy');
+
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.export-excel');
+    Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
 });

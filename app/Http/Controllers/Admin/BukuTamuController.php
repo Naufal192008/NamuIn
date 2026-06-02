@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\KategoriTamu;
+use App\Models\Pegawai;
 use App\Models\Tamu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ class BukuTamuController extends Controller
         $menunggu  = Tamu::whereDate('jam_masuk', $today)->where('status', 'Menunggu')->count();
         $totalHari = Tamu::whereDate('jam_masuk', $today)->count();
 
-        $query = Tamu::with('kategori')->whereDate('jam_masuk', $today);
+        $query = Tamu::with(['kategori', 'pegawaiTujuan'])->whereDate('jam_masuk', $today);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -27,8 +28,9 @@ class BukuTamuController extends Controller
 
         $kunjungan = $query->orderBy('jam_masuk', 'desc')->paginate(10)->withQueryString();
         $kategoris = KategoriTamu::all();
+        $pegawais  = Pegawai::where('aktif', true)->orderBy('nama')->get();
 
-        return view('admin.buku-tamu', compact('menunggu', 'totalHari', 'kunjungan', 'kategoris'));
+        return view('admin.buku-tamu', compact('menunggu', 'totalHari', 'kunjungan', 'kategoris', 'pegawais'));
     }
 
     public function store(Request $request)
@@ -39,12 +41,13 @@ class BukuTamuController extends Controller
             'no_wa'            => 'required|string|max:20',
             'kategori_id'      => 'required|exists:kategori_tamu,id',
             'tujuan_kunjungan' => 'required|string|max:150',
+            'bertemu_dengan'   => 'nullable|exists:pegawai,id',
             'detail_keperluan' => 'nullable|string|max:500',
         ]);
 
         Tamu::create($request->only([
             'nama_tamu', 'instansi', 'no_wa', 'kategori_id',
-            'tujuan_kunjungan', 'detail_keperluan',
+            'tujuan_kunjungan', 'bertemu_dengan', 'detail_keperluan',
         ]) + ['status' => 'Menunggu']);
 
         return back()->with('success', 'Data kunjungan berhasil ditambahkan.');

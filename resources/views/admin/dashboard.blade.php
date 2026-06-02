@@ -4,16 +4,16 @@
 
 @section('content')
 <div class="grid-3 mb-6">
-    <div class="stat-card">
+    <div class="stat-card primary-border">
         <div class="stat-label">Tamu Menunggu <span>⏳</span></div>
-        <div class="stat-value">{{ $menunggu }}</div>
+        <div class="stat-value" style="color:var(--primary)">{{ $menunggu }}</div>
     </div>
     <div class="stat-card">
         <div class="stat-label">Sedang Ditemui <span>💬</span></div>
-        <div class="stat-value">{{ $ditemui }}</div>
+        <div class="stat-value" style="color:var(--tertiary)">{{ $ditemui }}</div>
     </div>
-    <div class="stat-card orange-border">
-        <div class="stat-label" style="color:#f97316">Total Hari Ini <span>👥</span></div>
+    <div class="stat-card">
+        <div class="stat-label">Total Hari Ini <span>👥</span></div>
         <div class="stat-value">{{ $totalHari }}</div>
     </div>
 </div>
@@ -30,10 +30,11 @@
                     <thead>
                         <tr>
                             <th>Nama Tamu</th>
-                            <th>Instansi / Kategori</th>
-                            <th>Tujuan</th>
+                            <th>Kategori</th>
+                            <th>Bertemu Dengan</th>
                             <th>Status</th>
                             <th>Waktu</th>
+                            <th>WA</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -42,16 +43,21 @@
                         <tr>
                             <td>
                                 <div style="font-weight:600;font-size:13px">{{ $tamu->nama_tamu }}</div>
-                                <div style="font-size:11px;color:#64748b">{{ $tamu->instansi }}</div>
+                                <div style="font-size:11px;color:var(--text-muted)">{{ $tamu->instansi }}</div>
                             </td>
                             <td>
                                 @if($tamu->kategori)
                                 <span class="tag" style="background:{{ $tamu->kategori->warna }}22;color:{{ $tamu->kategori->warna }}">
                                     {{ $tamu->kategori->nama_kategori }}
                                 </span>
-                                @endif
+                                @else<span style="color:var(--text-muted)">—</span>@endif
                             </td>
-                            <td style="font-size:13px">{{ $tamu->tujuan_kunjungan }}</td>
+                            <td>
+                                @if($tamu->pegawaiTujuan)
+                                <div style="font-size:12px;font-weight:600">{{ $tamu->pegawaiTujuan->nama }}</div>
+                                <div style="font-size:11px;color:var(--text-muted)">{{ $tamu->pegawaiTujuan->jabatan }}</div>
+                                @else<span style="font-size:12px;color:var(--text-muted)">{{ $tamu->tujuan_kunjungan }}</span>@endif
+                            </td>
                             <td>
                                 @if($tamu->status === 'Menunggu')
                                     <span class="badge badge-menunggu">{{ $tamu->status }}</span>
@@ -61,10 +67,19 @@
                                     <span class="badge badge-selesai">{{ $tamu->status }}</span>
                                 @endif
                             </td>
-                            <td style="font-size:12px;color:#64748b;white-space:nowrap">
+                            <td style="font-size:12px;color:var(--text-muted);white-space:nowrap">
                                 {{ $tamu->jam_masuk->format('H:i') }}
                                 @if($tamu->jam_pulang)
-                                    <br><span style="color:#94a3b8">(dur: {{ $tamu->durasi }})</span>
+                                    <br><span style="color:#94a3b8">({{ $tamu->durasi }})</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($tamu->wa_sent_at)
+                                    <span title="WA terkirim {{ $tamu->wa_sent_at->format('H:i') }}" style="font-size:15px">✅</span>
+                                @elseif($tamu->pegawaiTujuan)
+                                    <span title="WA belum terkirim" style="font-size:15px">⏳</span>
+                                @else
+                                    <span style="color:var(--text-muted);font-size:11px">—</span>
                                 @endif
                             </td>
                             <td>
@@ -73,20 +88,20 @@
                                     <form method="POST" action="{{ route('admin.buku-tamu.status', $tamu) }}">
                                         @csrf @method('PATCH')
                                         <input type="hidden" name="status" value="Sedang Ditemui">
-                                        <button class="btn btn-ghost btn-sm" title="Temui">Temui</button>
+                                        <button class="btn btn-tertiary btn-sm">Temui</button>
                                     </form>
                                     @elseif($tamu->status === 'Sedang Ditemui')
                                     <form method="POST" action="{{ route('admin.buku-tamu.status', $tamu) }}">
                                         @csrf @method('PATCH')
                                         <input type="hidden" name="status" value="Selesai">
-                                        <button class="btn btn-ghost btn-sm" title="Selesai">Selesai</button>
+                                        <button class="btn btn-ghost btn-sm">Selesai</button>
                                     </form>
                                     @endif
                                 </div>
                             </td>
                         </tr>
                         @empty
-                        <tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:32px">Belum ada kunjungan hari ini</td></tr>
+                        <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px">Belum ada kunjungan hari ini</td></tr>
                         @endforelse
                     </tbody>
                 </table>

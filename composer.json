@@ -78,8 +78,16 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "filament/upgrade": true
         }
+    },
+    "audit": {
+        "ignore": [
+            "PKSA-jyd3-2srm-pfqd",
+            "PKSA-1ds2-yqqr-64g1",
+            "PKSA-g5js-3ypd-k2kr"
+        ]
     },
     "minimum-stability": "stable",
     "prefer-stable": true

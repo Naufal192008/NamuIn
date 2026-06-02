@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $ditemui    = Tamu::whereDate('jam_masuk', $today)->where('status', 'Sedang Ditemui')->count();
         $totalHari  = Tamu::whereDate('jam_masuk', $today)->count();
 
-        $kunjunganHariIni = Tamu::with('kategori')
+        $kunjunganHariIni = Tamu::with(['kategori', 'pegawaiTujuan'])
             ->whereDate('jam_masuk', $today)
             ->orderBy('jam_masuk', 'desc')
             ->paginate(10);

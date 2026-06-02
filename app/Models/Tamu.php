@@ -4,19 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Pegawai;
 
 class Tamu extends Model
 {
     protected $table = 'tamu';
     protected $fillable = [
         'nama_tamu', 'instansi', 'no_wa', 'kategori_id',
-        'tujuan_kunjungan', 'detail_keperluan', 'handled_by',
-        'jam_masuk', 'jam_pulang', 'status',
+        'tujuan_kunjungan', 'detail_keperluan', 'bertemu_dengan', 'handled_by',
+        'jam_masuk', 'jam_pulang', 'status', 'wa_sent_at',
     ];
 
     protected $casts = [
-        'jam_masuk' => 'datetime',
-        'jam_pulang' => 'datetime',
+        'jam_masuk'   => 'datetime',
+        'jam_pulang'  => 'datetime',
+        'wa_sent_at'  => 'datetime',
     ];
 
     public function kategori(): BelongsTo
@@ -27,6 +29,11 @@ class Tamu extends Model
     public function handler(): BelongsTo
     {
         return $this->belongsTo(User::class, 'handled_by');
+    }
+
+    public function pegawaiTujuan(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class, 'bertemu_dengan');
     }
 
     public function getDurasiAttribute(): string
