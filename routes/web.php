@@ -16,6 +16,8 @@ Route::get('/login', [LoginController::class, 'showForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+Route::get('/display', [TamuPublikController::class, 'display'])->name('display');
+
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

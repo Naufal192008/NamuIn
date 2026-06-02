@@ -53,4 +53,10 @@ class TamuPublikController extends Controller
 
         return redirect('/')->with('success', 'Terima kasih! Check-in Anda berhasil dicatat. Silakan menunggu dipanggil.');
     }
+
+    public function display()
+    {
+        $checkinUrl = url('/?from=qr');
+        return view('publik.display', compact('checkinUrl'));
+    }
 }
