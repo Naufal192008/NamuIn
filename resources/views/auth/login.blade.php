@@ -37,6 +37,7 @@
 
         .left-panel {
             flex: 1;
+            max-width: 55%;
             background: var(--secondary);
             position: relative;
             overflow: hidden;
