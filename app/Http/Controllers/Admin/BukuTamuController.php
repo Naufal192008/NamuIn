@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\KategoriTamu;
+use App\Models\Tamu;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class BukuTamuController extends Controller
+{
+    public function index(Request $request)
+    {
+        $today = today();
+        $menunggu  = Tamu::whereDate('jam_masuk', $today)->where('status', 'Menunggu')->count();
+        $totalHari = Tamu::whereDate('jam_masuk', $today)->count();
+
+        $query = Tamu::with('kategori')->whereDate('jam_masuk', $today);
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('kategori')) {
+            $query->where('kategori_id', $request->kategori);
+        }
+
+        $kunjungan = $query->orderBy('jam_masuk', 'desc')->paginate(10)->withQueryString();
+        $kategoris = KategoriTamu::all();
+
+        return view('admin.buku-tamu', compact('menunggu', 'totalHari', 'kunjungan', 'kategoris'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama_tamu'        => 'required|string|max:100',
+            'instansi'         => 'required|string|max:100',
+            'no_wa'            => 'required|string|max:20',
+            'kategori_id'      => 'required|exists:kategori_tamu,id',
+            'tujuan_kunjungan' => 'required|string|max:150',
+            'detail_keperluan' => 'nullable|string|max:500',
+        ]);
+
+        Tamu::create($request->only([
+            'nama_tamu', 'instansi', 'no_wa', 'kategori_id',
+            'tujuan_kunjungan', 'detail_keperluan',
+        ]) + ['status' => 'Menunggu']);
+
+        return back()->with('success', 'Data kunjungan berhasil ditambahkan.');
+    }
+
+    public function updateStatus(Request $request, Tamu $tamu)
+    {
+        $request->validate(['status' => 'required|in:Menunggu,Sedang Ditemui,Selesai']);
+
+        $data = ['status' => $request->status];
+
+        if ($request->status === 'Sedang Ditemui') {
+            $data['handled_by'] = Auth::id();
+        }
+        if ($request->status === 'Selesai') {
+            $data['jam_pulang'] = now();
+        }
+
+        $tamu->update($data);
+
+        return back()->with('success', 'Status tamu berhasil diperbarui.');
+    }
+
+    public function destroy(Tamu $tamu)
+    {
+        $tamu->delete();
+        return back()->with('success', 'Data kunjungan berhasil dihapus.');
+    }
+}
