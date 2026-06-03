@@ -1,4 +1,4 @@
-# NamuIn — Digital Receptionist & Guestbook System
+# NamuIn - Digital Receptionist & Guestbook System
 
 **NamuIn** adalah aplikasi buku tamu digital dan manajemen kunjungan sekolah berbasis web. Aplikasi ini dirancang untuk mempermudah tugas resepsionis, merekam kunjungan tamu secara real-time, dan mengintegrasikan notifikasi dua arah secara langsung antara tamu dan staf sekolah melalui WhatsApp API (Fonnte).
 
