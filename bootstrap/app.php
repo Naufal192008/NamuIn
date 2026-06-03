@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->validateCsrfTokens(except: [
             'webhook/whatsapp',
+            'check-in',
+            'booking',
+            'check-in/booking',
+            'check-out',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
