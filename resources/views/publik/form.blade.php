@@ -11,6 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *:focus { outline: none !important; }
         :root {
             --primary: #FF6B00;
             --primary-dark: #E55F00;
@@ -590,7 +591,7 @@
 
         <footer class="form-footer">
             <div class="form-footer-brand">NamuIn</div>
-            <div class="form-footer-copy">© {{ date('Y') }} NamuIn. All rights reserved.</div>
+            <div class="form-footer-copy">developed by some peeps in XI RPL 1</div>
         </footer>
     </div>
 

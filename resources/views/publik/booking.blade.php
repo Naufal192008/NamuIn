@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *:focus { outline: none !important; }
         :root {
             --primary: #FF6B00;
             --primary-dark: #E55F00;
@@ -361,7 +362,7 @@
 
         <footer class="form-footer">
             <div class="form-footer-brand">NamuIn</div>
-            <div class="form-footer-copy">© {{ date('Y') }} NamuIn. All rights reserved.</div>
+            <div class="form-footer-copy">developed by some peeps in XI RPL 1</div>
         </footer>
     </div>
 </div>

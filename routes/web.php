@@ -8,7 +8,10 @@ use App\Http\Controllers\Admin\BukuTamuController;
 use App\Http\Controllers\Admin\KategoriTamuController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\PegawaiController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AdminBookingController;
 use App\Http\Controllers\Webhook\WhatsAppWebhookController;
+use App\Http\Middleware\PreventBackHistory;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [TamuPublikController::class, 'index'])->name('home');
@@ -33,7 +36,7 @@ Route::get('/display', [TamuPublikController::class, 'display'])->name('display'
 Route::get('/display/live-feed', [TamuPublikController::class, 'liveFeed'])->name('display.live-feed');
 Route::post('/webhook/whatsapp', [WhatsAppWebhookController::class, 'handleWebhook'])->name('webhook.whatsapp');
 
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', PreventBackHistory::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/whatsapp-simulator', [WhatsAppWebhookController::class, 'simulator'])->name('whatsapp-simulator');
     Route::post('/whatsapp-simulator', [WhatsAppWebhookController::class, 'simulateWebhook'])->name('whatsapp-simulator.post');
@@ -42,6 +45,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/buku-tamu', [BukuTamuController::class, 'store'])->name('buku-tamu.store');
     Route::patch('/buku-tamu/{tamu}/status', [BukuTamuController::class, 'updateStatus'])->name('buku-tamu.status');
     Route::delete('/buku-tamu/{tamu}', [BukuTamuController::class, 'destroy'])->name('buku-tamu.destroy');
+
+    Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
+    Route::post('/bookings/{booking}/approve', [AdminBookingController::class, 'approve'])->name('bookings.approve');
+    Route::post('/bookings/{booking}/reject', [AdminBookingController::class, 'reject'])->name('bookings.reject');
 
     // Admin Only Configuration Routes
     Route::middleware('can:admin')->group(function () {
@@ -55,6 +62,11 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::patch('/pegawai/{pegawai}', [PegawaiController::class, 'update'])->name('pegawai.update');
         Route::patch('/pegawai/{pegawai}/toggle', [PegawaiController::class, 'toggleAktif'])->name('pegawai.toggle');
         Route::delete('/pegawai/{pegawai}', [PegawaiController::class, 'destroy'])->name('pegawai.destroy');
+
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');

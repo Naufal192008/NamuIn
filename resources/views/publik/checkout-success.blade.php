@@ -186,7 +186,7 @@
 
         <footer class="form-footer">
             <div class="form-footer-brand">NamuIn</div>
-            <div class="form-footer-copy">© {{ date('Y') }} NamuIn. All rights reserved.</div>
+            <div class="form-footer-copy">developed by some peeps in XI RPL 1</div>
         </footer>
     </div>
 </div>

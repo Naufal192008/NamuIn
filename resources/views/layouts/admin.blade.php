@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        *:focus{outline:none !important}
         :root{
             --primary:#FF6B00;
             --primary-dark:#E55F00;
@@ -52,6 +53,8 @@
             color:rgba(255,255,255,.5);text-decoration:none;font-size:13px;font-weight:500;
             margin-bottom:1px;
             transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            -webkit-user-select: none;
         }
         .sidebar-nav a svg{width:16px;height:16px;flex-shrink:0;opacity:.7;transition: opacity 0.15s;}
         .sidebar-nav a:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.06)}
@@ -71,6 +74,8 @@
             color:rgba(255,255,255,.4);font-size:13px;font-weight:500;cursor:pointer;
             background:none;border:none;width:100%;text-align:left;font-family:'Plus Jakarta Sans',sans-serif;
             transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            -webkit-user-select: none;
         }
         .sidebar-logout-btn svg{width:16px;height:16px;flex-shrink:0}
         .sidebar-logout-btn:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.06)}
@@ -78,29 +83,152 @@
 
         /* MAIN */
         .main-wrap{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
-        .topbar{
-            background:var(--white);border-bottom:1px solid var(--border);
-            padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;
-            position:sticky;top:0;z-index:50;
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.5; }
         }
-        .topbar-left{display:flex;align-items:center;gap:12px}
-        .topbar-breadcrumb{font-size:12px;color:var(--text-muted)}
-        .topbar-breadcrumb strong{color:var(--text);font-weight:600}
-        .topbar-right{display:flex;align-items:center;gap:10px}
-        .topbar-icon-btn{
-            width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
-            display:flex;align-items:center;justify-content:center;
-            cursor:pointer;color:var(--text-muted);background:var(--white);
-            transition: all 0.12s ease;
+        .topbar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px) saturate(120%);
+            -webkit-backdrop-filter: blur(16px) saturate(120%);
+            border-bottom: 1px solid rgba(9, 9, 11, 0.06);
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
-        .topbar-icon-btn svg{width:16px;height:16px}
-        .topbar-icon-btn:hover{background:var(--bg);color:var(--text)}
-        .topbar-icon-btn:active{transform: scale(0.95);}
-        .topbar-sep{width:1px;height:20px;background:var(--border)}
-        .topbar-user{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;cursor:pointer;transition: all 0.12s ease;}
-        .topbar-user:hover{background:var(--bg)}
-        .topbar-avatar{width:30px;height:30px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
-        .topbar-username{font-size:13px;font-weight:600}
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .sys-divider {
+            width: 1px;
+            height: 16px;
+            background: var(--border);
+        }
+        .topbar-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .breadcrumb-prefix {
+            color: var(--text-muted);
+            opacity: 0.8;
+        }
+        .breadcrumb-arrow {
+            width: 8px;
+            height: 8px;
+            color: var(--text-muted);
+            opacity: 0.4;
+        }
+        .breadcrumb-current {
+            color: var(--text);
+            font-weight: 700;
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .topbar-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .topbar-action-btn svg {
+            width: 14px;
+            height: 14px;
+            color: var(--text-muted);
+            transition: transform 0.2s, color 0.2s;
+        }
+        .topbar-action-btn:hover {
+            border-color: var(--primary);
+            background: var(--bg);
+            color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(255, 107, 0, 0.04);
+        }
+        .topbar-action-btn:hover svg {
+            color: var(--primary);
+            transform: translate(1px, -1px);
+        }
+        .topbar-action-btn:active {
+            transform: translateY(0.5px) scale(0.98);
+        }
+        .topbar-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .topbar-profile:hover {
+            background: rgba(9, 9, 11, 0.03);
+        }
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--secondary);
+            color: var(--white);
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 2px 5px rgba(9, 9, 11, 0.1);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .topbar-profile:hover .profile-avatar {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            transform: scale(1.05);
+        }
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1px;
+        }
+        .profile-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.2;
+        }
+        .profile-role {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 8.5px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1;
+        }
 
         .page-content{padding:28px;flex:1}
 
@@ -159,6 +287,8 @@
             display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;text-decoration:none;
             transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
             font-family:'Plus Jakarta Sans',sans-serif;line-height:1;
+            user-select: none;
+            -webkit-user-select: none;
         }
         .btn svg{width:14px;height:14px;flex-shrink:0}
         .btn-primary{background:var(--primary);color:#fff}
@@ -187,6 +317,7 @@
         .pagination{display:flex;align-items:center;gap:4px;padding:14px 16px}
         .pagination span,.pagination a{display:flex;align-items:center;justify-content:center;min-width:30px;height:30px;border-radius:6px;font-size:12px;font-weight:500;text-decoration:none;color:var(--text-muted);border:1px solid var(--border);padding:0 6px}
         .pagination .active span{background:var(--primary);color:#fff;border-color:var(--primary)}
+        .pagination .disabled span{opacity:0.4;background:rgba(9,9,9,0.02);cursor:not-allowed;border-color:rgba(9,9,9,0.08)}
         .pagination a:hover{background:var(--bg)}
         .pagination-info{font-size:12px;color:var(--text-muted);padding:0 16px 14px}
 
@@ -218,13 +349,13 @@
 <body>
 <aside class="sidebar">
     <div class="sidebar-brand" style="padding: 24px 20px 20px;">
-        <div class="sidebar-logo" style="gap: 10px;">
-            <div class="sidebar-logo-dot" style="background: #ffffff; padding: 3px; width: 34px; height: 34px; border-radius: 8px;">
+        <div class="sidebar-logo" style="gap: 12px; align-items: center;">
+            <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <img src="/logo.png" alt="NamuIn Logo" style="width: 100%; height: 100%; object-fit: contain;">
             </div>
-            <h1 style="font-size: 20px; font-weight: 800; letter-spacing: -0.5px;">NamuIn</h1>
+            <h1 style="font-size: 24px; font-weight: 800; letter-spacing: -0.5px; font-family: 'Bricolage Grotesque', sans-serif; color: #fff;">NamuIn</h1>
         </div>
-        <div class="sidebar-sub" style="padding-left: 44px; margin-top: 2px; font-size: 9px; letter-spacing: 1px;">Receptionist System</div>
+        <div class="sidebar-sub" style="padding-left: 56px; margin-top: 1px; font-size: 9px; letter-spacing: 1px;">Receptionist System</div>
     </div>
 
     <nav class="sidebar-nav">
@@ -237,6 +368,10 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" /></svg>
             Buku Tamu
         </a>
+        <a href="{{ route('admin.bookings.index') }}" class="{{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+            Janji Temu
+        </a>
         @if(auth()->user()->role === 'admin')
         <a href="{{ route('admin.kategori-tamu.index') }}" class="{{ request()->routeIs('admin.kategori-tamu.*') ? 'active' : '' }}">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" /></svg>
@@ -245,6 +380,10 @@
         <a href="{{ route('admin.pegawai.index') }}" class="{{ request()->routeIs('admin.pegawai.*') ? 'active' : '' }}">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
             Staf Sekolah
+        </a>
+        <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" /></svg>
+            Kelola Pengguna
         </a>
         @endif
         <a href="{{ route('admin.laporan.index') }}" class="{{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
@@ -285,16 +424,24 @@
 <div class="main-wrap">
     <header class="topbar">
         <div class="topbar-left">
-            <span class="topbar-breadcrumb">NamuIn &rsaquo; <strong>@yield('page-title', 'Dashboard')</strong></span>
+            <div class="topbar-breadcrumb">
+                <span class="breadcrumb-prefix">Lobi</span>
+                <svg class="breadcrumb-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                <strong class="breadcrumb-current">@yield('page-title', 'Dashboard')</strong>
+            </div>
         </div>
         <div class="topbar-right">
-            <a href="{{ route('home') }}" target="_blank" class="topbar-icon-btn" title="Lihat Form Publik">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+            <a href="{{ route('home') }}" target="_blank" class="topbar-action-btn" title="Kunjungi Lobi Publik">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+                <span>Lobi Publik</span>
             </a>
-            <div class="topbar-sep"></div>
-            <div class="topbar-user">
-                <div class="topbar-avatar">{{ substr(auth()->user()->name, 0, 1) }}</div>
-                <span class="topbar-username">{{ explode(' ', auth()->user()->name)[0] }}</span>
+            <span class="sys-divider"></span>
+            <div class="topbar-profile">
+                <div class="profile-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                <div class="profile-info">
+                    <span class="profile-name">{{ explode(' ', auth()->user()->name)[0] }}</span>
+                    <span class="profile-role">{{ auth()->user()->role === 'admin' ? 'Admin' : 'Resepsionis' }}</span>
+                </div>
             </div>
         </div>
     </header>

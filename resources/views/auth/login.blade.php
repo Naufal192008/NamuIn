@@ -17,6 +17,9 @@
             margin: 0;
             padding: 0
         }
+        *:focus {
+            outline: none !important
+        }
 
         :root {
             --primary: #FF6B00;
@@ -265,6 +268,8 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .btn-login:hover {
@@ -330,10 +335,6 @@
         <img src="/images/hotel.jpg" alt="Reception lobby">
         <div class="left-overlay"></div>
         <div class="left-content">
-            <div class="lc-tag" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); padding: 6px 14px; border-radius: 12px; display: inline-flex; align-items: center; gap: 8px; color: #fff; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 16px;">
-                <img src="/logo.png" alt="Logo NamuIn" style="width: 16px; height: 16px; object-fit: contain; filter: brightness(0) invert(1);">
-                <span>Digital Guestbook</span>
-            </div>
             <h2>Kelola Tamu Sekolah<br>dengan Mudah</h2>
             <p>Sistem buku tamu digital yang memudahkan resepsionis mencatat dan memantau setiap kunjungan secara
                 real-time.</p>
@@ -344,14 +345,17 @@
         <div class="right-content-wrapper">
             <div>
                 <div class="brand" style="gap: 12px; align-items: center; display: flex; margin-bottom: 6px;">
-                    <div class="brand-dot" style="background: transparent; border-radius: 0; width: 38px; height: 38px; flex-shrink: 0; display: block;">
-                        <img src="/logo.png" alt="NamuIn Logo" style="width: 100%; height: 100%; object-fit: contain; transform: scale(1.05);">
+                    <div class="brand-dot"
+                        style="background: transparent; border-radius: 0; width: 38px; height: 38px; flex-shrink: 0; display: block;">
+                        <img src="/logo.png" alt="NamuIn Logo"
+                            style="width: 100%; height: 100%; object-fit: contain; transform: scale(1.05);">
                     </div>
-                    <h1 style="font-size: 26px; font-weight: 800; letter-spacing: -0.8px; line-height: 1; margin: 0;">NamuIn</h1>
+                    <h1 style="font-size: 26px; font-weight: 800; letter-spacing: -0.8px; line-height: 1; margin: 0;">
+                        NamuIn</h1>
                 </div>
                 <p class="brand"
-                    style="display:block;margin-top:3px;margin-left:18px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#71717A">
-                    Digital Guestbook Management</p>
+                    style="display:block;margin-top:3px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#71717A">
+                    Your Digital Guestbook Management</p>
             </div>
 
             <div class="login-form">
@@ -404,13 +408,10 @@
                 </form>
             </div>
 
-            <div class="form-footer">
-                <p>© {{ date('Y') }} NamuIn by XAMPP_Crash. All rights reserved.</p>
-                <div class="form-footer-links">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Support</a>
-                </div>
+            <div class="form-footer" style="text-align: center; border-top: none; margin-top: 10px; padding-top: 10px;">
+                <p
+                    style="font-size: 12px; color: var(--neutral); font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif;">
+                    developed by some peeps in XI RPL 1</p>
             </div>
         </div>
     </div>

@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *:focus { outline: none !important; }
         :root {
             --primary: #FF6B00;
             --primary-dark: #E55F00;
@@ -222,7 +223,7 @@
 
         <footer class="form-footer">
             <div class="form-footer-brand">NamuIn</div>
-            <div class="form-footer-copy">© {{ date('Y') }} NamuIn. All rights reserved.</div>
+            <div class="form-footer-copy">developed by some peeps in XI RPL 1</div>
         </footer>
     </div>
 </div>
