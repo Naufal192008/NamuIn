@@ -40,7 +40,7 @@ Diagram ini menjelaskan alur ketika tamu datang langsung ke lobi sekolah untuk c
 ```mermaid
 graph TD
     %% Lobby Guest Flow
-    subgraph Lobi Tamu (Check-in)
+    subgraph lobi ["Lobi Tamu (Check-in)"]
         A[Tamu Tiba di Sekolah] --> B{Punya Kode Booking?}
         B -- Ya --> C[Masukkan Kode Booking di Layar]
         C --> D[Status: Sedang Ditemui / Menunggu]
@@ -51,7 +51,7 @@ graph TD
     end
 
     %% Webhook & Response Flow
-    subgraph Respon Staf (WhatsApp / Webhook)
+    subgraph respon ["Respon Staf (WhatsApp / Webhook)"]
         H --> I{Staf Membalas via WA?}
         I -- "1 (Temui)" --> J[Status: Sedang Ditemui]
         I -- "2 (Tunda)" --> K[Status: Menunggu (Minta Tamu Tunggu)]
@@ -63,7 +63,7 @@ graph TD
     end
 
     %% Checkout Flow
-    subgraph Check-out
+    subgraph checkout ["Check-out"]
         M --> P[Tamu Selesai Kunjungan]
         P --> Q{Metode Check-out?}
         Q -- Mandiri --> R[Klik Link WA dari HP Tamu]
@@ -80,13 +80,13 @@ Diagram ini menjelaskan alur pengajuan jadwal temu sebelum hari kunjungan:
 
 ```mermaid
 graph TD
-    subgraph Pengajuan Janji Temu (Pre-Booking)
+    subgraph pre_booking ["Pengajuan Janji Temu (Pre-Booking)"]
         A[Tamu Isi Form /booking] --> B[Generate Kode Booking Unik NMU-XXXXX]
         B --> C[Kirim Notifikasi Pengajuan ke Staf]
         C --> D[Status: Diajukan]
     end
 
-    subgraph Persetujuan (Approval)
+    subgraph approval ["Persetujuan (Approval)"]
         D --> E{Keputusan Staf / Admin?}
         E -- Setujui --> F[Status: Disetujui]
         E -- Tolak --> G[Status: Dibatalkan]
@@ -95,7 +95,7 @@ graph TD
         G --> I[Kirim WA Penolakan + Alasan ke Tamu]
     end
     
-    subgraph Kedatangan (Arrival)
+    subgraph arrival ["Kedatangan (Arrival)"]
         H --> J[Tamu Datang ke Lobi Sekolah]
         J --> K[Masukkan Kode Booking di Layar Lobi]
         K --> L[Status Berubah: Menunggu / Ditemui]
