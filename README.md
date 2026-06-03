@@ -54,7 +54,7 @@ graph TD
     subgraph respon ["Respon Staf (WhatsApp / Webhook)"]
         H --> I{Staf Membalas via WA?}
         I -- "1 (Temui)" --> J[Status: Sedang Ditemui]
-        I -- "2 (Tunda)" --> K[Status: Menunggu (Minta Tamu Tunggu)]
+        I -- "2 (Tunda)" --> K["Status: Menunggu (Minta Tamu Tunggu)"]
         I -- "3 (Sibuk)" --> L[Status: Selesai / Batal]
         
         J --> M[Kirim Link Check-out ke WA Tamu]
