@@ -19,6 +19,12 @@ class TamuPublikController extends Controller
 
     public function store(Request $request)
     {
+        // Honeypot check
+        if ($request->filled('secondary_phone')) {
+            \Illuminate\Support\Facades\Log::warning("Spam check-in blocked by Honeypot trap.");
+            return redirect('/')->with('success', 'Terima kasih! Check-in Anda berhasil dicatat. Silakan menunggu dipanggil.');
+        }
+
         $request->validate([
             'nama_tamu'        => 'required|string|max:100',
             'instansi'         => 'required|string|max:100',
@@ -27,6 +33,7 @@ class TamuPublikController extends Controller
             'tujuan_kunjungan' => 'required|string|max:150',
             'bertemu_dengan'   => 'nullable|exists:pegawai,id',
             'detail_keperluan' => 'nullable|string|max:500',
+            'sudah_janji'      => 'nullable|boolean',
         ], [
             'nama_tamu.required'        => 'Nama lengkap wajib diisi.',
             'instansi.required'         => 'Asal instansi wajib diisi.',
@@ -43,6 +50,7 @@ class TamuPublikController extends Controller
             'tujuan_kunjungan' => $request->tujuan_kunjungan,
             'bertemu_dengan'   => $request->bertemu_dengan ?: null,
             'detail_keperluan' => $request->detail_keperluan,
+            'sudah_janji'      => $request->boolean('sudah_janji'),
             'status'           => 'Menunggu',
         ]);
 
@@ -58,5 +66,92 @@ class TamuPublikController extends Controller
     {
         $checkinUrl = url('/?from=qr');
         return view('publik.display', compact('checkinUrl'));
+    }
+
+    public function liveFeed()
+    {
+        $today = today();
+        $total = Tamu::whereDate('jam_masuk', $today)->count();
+        $recent = Tamu::whereDate('jam_masuk', $today)
+            ->orderBy('jam_masuk', 'desc')
+            ->limit(3)
+            ->get()
+            ->map(function ($t) {
+                return [
+                    'nama' => $t->nama_tamu,
+                    'instansi' => $t->instansi,
+                    'jam' => $t->jam_masuk->format('H:i')
+                ];
+            });
+
+        return response()->json([
+            'total' => $total,
+            'recent' => $recent
+        ]);
+    }
+
+    public function showCheckoutForm()
+    {
+        return view('publik.checkout');
+    }
+
+    public function checkoutByNameOrPhone(Request $request)
+    {
+        // Honeypot check
+        if ($request->filled('secondary_phone')) {
+            \Illuminate\Support\Facades\Log::warning("Spam check-out blocked by Honeypot trap.");
+            return redirect()->route('home')->with('success', 'Terima kasih! Check-out Anda berhasil dicatat.');
+        }
+
+        $request->validate([
+            'no_wa' => 'required|string|max:20',
+        ], [
+            'no_wa.required' => 'Nomor WhatsApp wajib diisi.',
+        ]);
+
+        $noWa = trim($request->no_wa);
+        $cleanNumber = preg_replace('/\D/', '', $noWa);
+        if (str_starts_with($cleanNumber, '0')) {
+            $cleanNumber = '62' . substr($cleanNumber, 1);
+        }
+
+        $tamu = Tamu::whereDate('jam_masuk', today())
+            ->whereIn('status', ['Menunggu', 'Sedang Ditemui'])
+            ->get()
+            ->first(function ($t) use ($cleanNumber, $noWa) {
+                $tamuWa = preg_replace('/\D/', '', $t->no_wa);
+                if (str_starts_with($tamuWa, '0')) {
+                    $tamuWa = '62' . substr($tamuWa, 1);
+                }
+                return $tamuWa === $cleanNumber || $t->no_wa === $noWa;
+            });
+
+        if (!$tamu) {
+            return back()->with('error', 'Kunjungan aktif tidak ditemukan untuk nomor WhatsApp ini hari ini. Pastikan Anda telah melakukan check-in.');
+        }
+
+        $tamu->update([
+            'status' => 'Selesai',
+            'jam_pulang' => now()
+        ]);
+
+        return redirect()->route('checkout.success', $tamu->id);
+    }
+
+    public function directCheckout(Tamu $tamu)
+    {
+        if ($tamu->status !== 'Selesai') {
+            $tamu->update([
+                'status' => 'Selesai',
+                'jam_pulang' => now()
+            ]);
+        }
+
+        return redirect()->route('checkout.success', $tamu->id);
+    }
+
+    public function checkoutSuccess(Tamu $tamu)
+    {
+        return view('publik.checkout-success', compact('tamu'));
     }
 }

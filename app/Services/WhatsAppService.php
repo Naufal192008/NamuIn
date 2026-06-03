@@ -16,46 +16,70 @@ class WhatsAppService
         $this->token = config('services.fonnte.token', '');
     }
 
-    public function kirimNotifikasiTamu(Tamu $tamu): bool
+    /**
+     * Send a generic WhatsApp message.
+     */
+    public function kirimPesan(string $to, string $pesan): bool
     {
+        // Format number if starts with 0
+        $cleanNumber = preg_replace('/\D/', '', $to);
+        if (str_starts_with($cleanNumber, '0')) {
+            $cleanNumber = '62' . substr($cleanNumber, 1);
+        }
+
         if (empty($this->token) || !config('services.fonnte.enabled', false)) {
-            Log::info('WA notification skipped: Fonnte disabled or no token.');
-            return false;
+            Log::info("=== MOCK WHATSAPP MESSAGE ===\nTo: {$cleanNumber}\nMessage:\n{$pesan}\n=============================");
+            return true; // Return true in mock mode so simulation flow proceeds
         }
-
-        $pegawai = $tamu->pegawaiTujuan;
-        if (!$pegawai || empty($pegawai->no_wa)) {
-            Log::warning("WA notif: Pegawai not found or no WA number for tamu #{$tamu->id}");
-            return false;
-        }
-
-        $pesan = $this->buildMessage($tamu, $pegawai->nama);
 
         try {
             $response = Http::withHeaders([
                 'Authorization' => $this->token,
             ])->post($this->baseUrl, [
-                'target'  => $pegawai->nomorWaFormatted,
+                'target'  => $cleanNumber,
                 'message' => $pesan,
                 'typing'  => false,
                 'delay'   => 1,
             ]);
 
             if ($response->successful() && ($response->json('status') === true || $response->json('status') === 'true')) {
-                $tamu->update(['wa_sent_at' => now()]);
-                Log::info("WA notif sent to {$pegawai->nama} ({$pegawai->nomorWaFormatted}) for tamu #{$tamu->id}");
+                Log::info("WA message successfully sent to {$cleanNumber}");
                 return true;
             }
 
-            Log::error("WA notif failed: " . $response->body());
+            Log::error("WA message send failed to {$cleanNumber}: " . $response->body());
             return false;
 
         } catch (\Exception $e) {
-            Log::error("WA notif exception: " . $e->getMessage());
+            Log::error("WA message exception for {$cleanNumber}: " . $e->getMessage());
             return false;
         }
     }
 
+    /**
+     * Send initial guest check-in alert to an employee.
+     */
+    public function kirimNotifikasiTamu(Tamu $tamu): bool
+    {
+        $pegawai = $tamu->pegawaiTujuan;
+        if (!$pegawai || empty($pegawai->no_wa)) {
+            Log::warning("WA notif: Pegawai not found or has no WA number for tamu #{$tamu->id}");
+            return false;
+        }
+
+        $pesan = $this->buildMessage($tamu, $pegawai->nama);
+
+        $success = $this->kirimPesan($pegawai->no_wa, $pesan);
+        if ($success) {
+            $tamu->update(['wa_sent_at' => now()]);
+        }
+
+        return $success;
+    }
+
+    /**
+     * Build the WhatsApp notification text body.
+     */
     private function buildMessage(Tamu $tamu, string $namaPegawai): string
     {
         $waktu     = $tamu->jam_masuk->format('H:i') . ' WIB';
@@ -75,7 +99,10 @@ class WhatsAppService
             "📝 *Keperluan:* {$keperluan}",
             "🕐 *Waktu Masuk:* {$waktu}",
             "",
-            "Silakan menuju resepsionis untuk menemui tamu Anda.",
+            "Balas pesan ini dengan angka/kata kunci berikut untuk merespons:",
+            "👉 Ketik *1* atau *OK* : Temui tamu sekarang.",
+            "👉 Ketik *2* atau *TUNDA* : Minta tamu menunggu sebentar.",
+            "👉 Ketik *3* atau *SIBUK* : Sedang sibuk, batalkan kunjungan.",
             "",
             "_Pesan ini dikirim otomatis oleh sistem *NamuIn*_",
         ]);

@@ -17,6 +17,11 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Admin NamuIn', 'role' => 'admin', 'password' => Hash::make('password')]
         );
 
+        User::firstOrCreate(
+            ['email' => 'resepsionis@namuin.id'],
+            ['name' => 'Randi Resepsionis', 'role' => 'receptionist', 'password' => Hash::make('password')]
+        );
+
         $kategoris = [
             ['nama_kategori' => 'Wali Murid',  'warna' => '#f59e0b'],
             ['nama_kategori' => 'Dinas',        'warna' => '#3b82f6'],

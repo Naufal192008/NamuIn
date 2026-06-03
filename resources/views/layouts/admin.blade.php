@@ -50,11 +50,13 @@
         .sidebar-nav a{
             display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:7px;
             color:rgba(255,255,255,.5);text-decoration:none;font-size:13px;font-weight:500;
-            transition:.12s;margin-bottom:1px;
+            margin-bottom:1px;
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .sidebar-nav a svg{width:16px;height:16px;flex-shrink:0;opacity:.7;transition:.12s}
+        .sidebar-nav a svg{width:16px;height:16px;flex-shrink:0;opacity:.7;transition: opacity 0.15s;}
         .sidebar-nav a:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.06)}
         .sidebar-nav a:hover svg{opacity:.9}
+        .sidebar-nav a:active{transform: translateY(0.5px) scale(0.985);}
         .sidebar-nav a.active{color:#fff;background:var(--primary)}
         .sidebar-nav a.active svg{opacity:1}
 
@@ -68,10 +70,11 @@
             display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:7px;
             color:rgba(255,255,255,.4);font-size:13px;font-weight:500;cursor:pointer;
             background:none;border:none;width:100%;text-align:left;font-family:'Plus Jakarta Sans',sans-serif;
-            transition:.12s;
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .sidebar-logout-btn svg{width:16px;height:16px;flex-shrink:0}
         .sidebar-logout-btn:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.06)}
+        .sidebar-logout-btn:active{transform: translateY(0.5px) scale(0.985);}
 
         /* MAIN */
         .main-wrap{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
@@ -88,12 +91,13 @@
             width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
             display:flex;align-items:center;justify-content:center;
             cursor:pointer;color:var(--text-muted);background:var(--white);
-            transition:.12s;
+            transition: all 0.12s ease;
         }
         .topbar-icon-btn svg{width:16px;height:16px}
         .topbar-icon-btn:hover{background:var(--bg);color:var(--text)}
+        .topbar-icon-btn:active{transform: scale(0.95);}
         .topbar-sep{width:1px;height:20px;background:var(--border)}
-        .topbar-user{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;cursor:pointer;transition:.12s}
+        .topbar-user{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;cursor:pointer;transition: all 0.12s ease;}
         .topbar-user:hover{background:var(--bg)}
         .topbar-avatar{width:30px;height:30px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
         .topbar-username{font-size:13px;font-weight:600}
@@ -107,7 +111,15 @@
         .alert-error{background:var(--red-bg);color:#7F1D1D;border:1px solid #FECACA}
 
         /* STAT CARDS */
-        .stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px 22px}
+        .stat-card{
+            background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px 22px;
+            box-shadow: 0 4px 20px -2px rgba(9, 9, 11, 0.04);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+        }
+        .stat-card:hover{
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(9, 9, 11, 0.08);
+        }
         .stat-card.primary-border{border-left:3px solid var(--primary)}
         .stat-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
         .stat-icon svg{width:18px;height:18px}
@@ -119,7 +131,10 @@
         .stat-value{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;color:var(--text)}
 
         /* CARD */
-        .card{background:var(--white);border:1px solid var(--border);border-radius:10px}
+        .card{
+            background:var(--white);border:1px solid var(--border);border-radius:10px;
+            box-shadow: 0 4px 20px -2px rgba(9, 9, 11, 0.04);
+        }
         .card-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
         .card-header h3{font-size:13px;font-weight:700;color:var(--text)}
         .card-body{padding:0}
@@ -140,7 +155,11 @@
         .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 
         /* BUTTONS */
-        .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:.12s;font-family:'Plus Jakarta Sans',sans-serif;line-height:1}
+        .btn{
+            display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;text-decoration:none;
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family:'Plus Jakarta Sans',sans-serif;line-height:1;
+        }
         .btn svg{width:14px;height:14px;flex-shrink:0}
         .btn-primary{background:var(--primary);color:#fff}
         .btn-primary:hover{background:var(--primary-dark)}
@@ -150,9 +169,12 @@
         .btn-ghost:hover{background:var(--bg)}
         .btn-blue{background:var(--blue-bg);color:var(--blue);border:1px solid #BAE6FD}
         .btn-blue:hover{background:#BAE6FD}
+        .btn-tertiary{background:var(--blue-bg);color:var(--blue);border:1px solid #BAE6FD}
+        .btn-tertiary:hover{background:#BAE6FD}
         .btn-sm{padding:5px 10px;font-size:12px}
         .btn-danger{background:var(--red-bg);color:var(--red);border:1.5px solid #FECACA}
         .btn-danger:hover{background:#FECACA}
+        .btn:active{transform: translateY(0.5px) scale(0.985);}
 
         /* FORMS */
         .form-group{margin-bottom:16px}
@@ -195,17 +217,14 @@
 </head>
 <body>
 <aside class="sidebar">
-    <div class="sidebar-brand">
-        <div class="sidebar-logo">
-            <div class="sidebar-logo-dot">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M11.584 2.376a.75.75 0 0 1 .832 0l9 6a.75.75 0 1 1-.832 1.248L12 3.901 3.416 9.624a.75.75 0 0 1-.832-1.248l9-6Z" />
-                    <path fill-rule="evenodd" d="M20.25 10.332v9.918H21a.75.75 0 0 1 0 1.5H3a.75.75 0 0 1 0-1.5h.75v-9.918a.75.75 0 0 1 .634-.74A49.109 49.109 0 0 1 12 9c2.59 0 5.134.202 7.616.592a.75.75 0 0 1 .634.74Zm-7.5 2.418a.75.75 0 0 0-1.5 0v6.75a.75.75 0 0 0 1.5 0v-6.75Zm3-.75a.75.75 0 0 1 .75.75v6.75a.75.75 0 0 1-1.5 0v-6.75a.75.75 0 0 1 .75-.75ZM9 12.75a.75.75 0 0 0-1.5 0v6.75a.75.75 0 0 0 1.5 0v-6.75Z" clip-rule="evenodd" />
-                </svg>
+    <div class="sidebar-brand" style="padding: 24px 20px 20px;">
+        <div class="sidebar-logo" style="gap: 10px;">
+            <div class="sidebar-logo-dot" style="background: #ffffff; padding: 3px; width: 34px; height: 34px; border-radius: 8px;">
+                <img src="/logo.png" alt="NamuIn Logo" style="width: 100%; height: 100%; object-fit: contain;">
             </div>
-            <h1>NamuIn</h1>
+            <h1 style="font-size: 20px; font-weight: 800; letter-spacing: -0.5px;">NamuIn</h1>
         </div>
-        <div class="sidebar-sub">Receptionist System</div>
+        <div class="sidebar-sub" style="padding-left: 44px; margin-top: 2px; font-size: 9px; letter-spacing: 1px;">Receptionist System</div>
     </div>
 
     <nav class="sidebar-nav">
@@ -218,6 +237,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" /></svg>
             Buku Tamu
         </a>
+        @if(auth()->user()->role === 'admin')
         <a href="{{ route('admin.kategori-tamu.index') }}" class="{{ request()->routeIs('admin.kategori-tamu.*') ? 'active' : '' }}">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" /></svg>
             Kategori Tamu
@@ -226,6 +246,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
             Staf Sekolah
         </a>
+        @endif
         <a href="{{ route('admin.laporan.index') }}" class="{{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
             Laporan
@@ -236,6 +257,10 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z" /></svg>
             Tampilan QR
         </a>
+        <a href="{{ route('admin.whatsapp-simulator') }}" class="{{ request()->routeIs('admin.whatsapp-simulator') ? 'active' : '' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a.75.75 0 0 1-1.074-.83l1.207-4.52a8.919 8.919 0 0 1-.843-3.62C4.7 7.444 8.73 3.75 13.7 3.75c4.97 0 9 3.706 9 8.25Z" /></svg>
+            Simulator WA
+        </a>
 
     </nav>
 
@@ -244,7 +269,7 @@
             <div class="sidebar-avatar">{{ substr(auth()->user()->name, 0, 1) }}</div>
             <div class="sidebar-user-info">
                 <div class="sidebar-user-name">{{ auth()->user()->name }}</div>
-                <div class="sidebar-user-role">Administrator</div>
+                <div class="sidebar-user-role">{{ auth()->user()->role === 'admin' ? 'Administrator' : 'Resepsionis' }}</div>
             </div>
         </div>
         <form method="POST" action="{{ route('logout') }}">

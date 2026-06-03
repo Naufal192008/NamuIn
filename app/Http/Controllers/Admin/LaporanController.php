@@ -32,7 +32,69 @@ class LaporanController extends Controller
         $kunjungan = $query->orderBy('jam_masuk', 'desc')->paginate(15)->withQueryString();
         $kategoris = KategoriTamu::all();
 
-        return view('admin.laporan', compact('kunjungan', 'kategoris', 'dari', 'sampai', 'kategori'));
+        // Calculate statistics for the filtered period
+        $dariTime = $dari . ' 00:00:00';
+        $sampaiTime = $sampai . ' 23:59:59';
+
+        // 1. Kategori Stats
+        $kategoriStatsQuery = \App\Models\Tamu::select(
+                'kategori_tamu.nama_kategori',
+                'kategori_tamu.warna',
+                \Illuminate\Support\Facades\DB::raw('count(*) as total')
+            )
+            ->join('kategori_tamu', 'tamu.kategori_id', '=', 'kategori_tamu.id')
+            ->whereBetween('jam_masuk', [$dariTime, $sampaiTime]);
+        if ($kategori) {
+            $kategoriStatsQuery->where('tamu.kategori_id', $kategori);
+        }
+        $kategoriStats = $kategoriStatsQuery->groupBy('kategori_tamu.nama_kategori', 'kategori_tamu.warna')->get();
+
+        // 2. Trend Harian
+        $trendStatsQuery = \App\Models\Tamu::select(
+                \Illuminate\Support\Facades\DB::raw('DATE(jam_masuk) as tanggal'),
+                \Illuminate\Support\Facades\DB::raw('count(*) as total')
+            )
+            ->whereBetween('jam_masuk', [$dariTime, $sampaiTime]);
+        if ($kategori) {
+            $trendStatsQuery->where('kategori_id', $kategori);
+        }
+        $trendStats = $trendStatsQuery->groupBy(\Illuminate\Support\Facades\DB::raw('DATE(jam_masuk)'))
+            ->orderBy('tanggal', 'asc')
+            ->get();
+
+        // 3. Jam Terpadat
+        $jamStatsQuery = \App\Models\Tamu::select(
+                \Illuminate\Support\Facades\DB::raw('HOUR(jam_masuk) as jam'),
+                \Illuminate\Support\Facades\DB::raw('count(*) as total')
+            )
+            ->whereBetween('jam_masuk', [$dariTime, $sampaiTime]);
+        if ($kategori) {
+            $jamStatsQuery->where('kategori_id', $kategori);
+        }
+        $jamStats = $jamStatsQuery->groupBy(\Illuminate\Support\Facades\DB::raw('HOUR(jam_masuk)'))
+            ->orderBy('jam', 'asc')
+            ->get();
+
+        // 4. Pegawai Terpopuler
+        $pegawaiStatsQuery = \App\Models\Tamu::select(
+                'pegawai.nama',
+                'pegawai.jabatan',
+                \Illuminate\Support\Facades\DB::raw('count(*) as total')
+            )
+            ->join('pegawai', 'tamu.bertemu_dengan', '=', 'pegawai.id')
+            ->whereBetween('jam_masuk', [$dariTime, $sampaiTime]);
+        if ($kategori) {
+            $pegawaiStatsQuery->where('tamu.kategori_id', $kategori);
+        }
+        $pegawaiStats = $pegawaiStatsQuery->groupBy('pegawai.nama', 'pegawai.jabatan')
+            ->orderBy('total', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('admin.laporan', compact(
+            'kunjungan', 'kategoris', 'dari', 'sampai', 'kategori',
+            'kategoriStats', 'trendStats', 'jamStats', 'pegawaiStats'
+        ));
     }
 
     public function exportExcel(Request $request)

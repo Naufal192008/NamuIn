@@ -56,68 +56,302 @@
     </form>
 </div>
 
-<div class="card">
-    <table>
-        <thead>
-            <tr>
-                <th style="width:44px">#</th>
-                <th>Nama Tamu</th>
-                <th>Instansi / Kategori</th>
-                <th>Bertemu Dengan</th>
-                <th>Tujuan</th>
-                <th>Masuk</th>
-                <th>Keluar</th>
-                <th>Durasi</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($kunjungan as $i => $tamu)
-            <tr>
-                <td style="color:var(--text-muted);font-size:12px;font-variant-numeric:tabular-nums">{{ str_pad(($kunjungan->currentPage() - 1) * $kunjungan->perPage() + $i + 1, 2, '0', STR_PAD_LEFT) }}</td>
-                <td>
-                    <div style="font-weight:600;font-size:13px">{{ $tamu->nama_tamu }}</div>
-                    <div style="font-size:11px;color:var(--text-muted)">{{ $tamu->no_wa }}</div>
-                </td>
-                <td>
-                    <div style="font-size:12px;color:var(--text-muted)">{{ $tamu->instansi }}</div>
-                    @if($tamu->kategori)
-                    <span class="tag" style="background:{{ $tamu->kategori->warna }}22;color:{{ $tamu->kategori->warna }};margin-top:3px;display:inline-block">
-                        {{ $tamu->kategori->nama_kategori }}
-                    </span>
-                    @endif
-                </td>
-                <td>
-                    @if($tamu->pegawaiTujuan)
-                    <div style="font-size:12px;font-weight:600">{{ $tamu->pegawaiTujuan->nama }}</div>
-                    <div style="font-size:11px;color:var(--text-muted)">{{ $tamu->pegawaiTujuan->jabatan }}</div>
-                    @else
-                    <span style="color:var(--text-muted)">—</span>
-                    @endif
-                </td>
-                <td style="font-size:12px;max-width:160px">{{ $tamu->tujuan_kunjungan }}</td>
-                <td style="font-size:12px;white-space:nowrap">{{ $tamu->jam_masuk->format('d/m H:i') }}</td>
-                <td style="font-size:12px;color:var(--text-muted);white-space:nowrap">{{ $tamu->jam_pulang ? $tamu->jam_pulang->format('H:i') : '—' }}</td>
-                <td style="font-size:12px;color:var(--text-muted)">{{ $tamu->jam_pulang ? $tamu->durasi : '—' }}</td>
-                <td>
-                    @if($tamu->status === 'Menunggu')
-                        <span class="badge badge-menunggu"><span class="badge-dot"></span>{{ $tamu->status }}</span>
-                    @elseif($tamu->status === 'Sedang Ditemui')
-                        <span class="badge badge-ditemui"><span class="badge-dot"></span>Ditemui</span>
-                    @else
-                        <span class="badge badge-selesai"><span class="badge-dot"></span>{{ $tamu->status }}</span>
-                    @endif
-                </td>
-            </tr>
-            @empty
-            <tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:48px">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" style="width:40px;height:40px;opacity:.2;margin:0 auto 10px;display:block"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
-                Tidak ada data untuk filter ini.
-            </td></tr>
-            @endforelse
-        </tbody>
-    </table>
-    <div class="pagination-info">Menampilkan {{ $kunjungan->firstItem() ?? 0 }}–{{ $kunjungan->lastItem() ?? 0 }} dari {{ $kunjungan->total() }} kunjungan</div>
-    <div class="pagination">{{ $kunjungan->links() }}</div>
+<!-- Tabs Switcher -->
+<div class="tabs mb-6" style="display:flex; border-bottom:1.5px solid var(--border); gap:20px">
+    <button class="tab-btn active-tab" id="btn-table" onclick="switchTab('table-tab')" style="background:none; border:none; padding:10px 4px; font-size:14px; font-weight:600; cursor:pointer; color:var(--text); border-bottom:2px solid var(--primary); margin-bottom:-1.5px; display:flex; align-items:center; gap:8px">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:16px;height:16px"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V18ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" /></svg>
+        Tabel Kunjungan
+    </button>
+    <button class="tab-btn" id="btn-chart" onclick="switchTab('chart-tab')" style="background:none; border:none; padding:10px 4px; font-size:14px; font-weight:600; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent; margin-bottom:-1.5px; display:flex; align-items:center; gap:8px">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:16px;height:16px"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21a7.5 7.5 0 0 0-7.5-7.5v7.5Z" /></svg>
+        Grafik & Analisis
+    </button>
+</div>
+
+<!-- TAB 1: TABEL LAPORAN -->
+<div id="table-tab" class="tab-pane">
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:44px">#</th>
+                    <th>Nama Tamu</th>
+                    <th>Instansi / Kategori</th>
+                    <th>Bertemu Dengan</th>
+                    <th>Tujuan</th>
+                    <th>Masuk</th>
+                    <th>Keluar</th>
+                    <th>Durasi</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($kunjungan as $i => $tamu)
+                <tr>
+                    <td style="color:var(--text-muted);font-size:12px;font-variant-numeric:tabular-nums">{{ str_pad(($kunjungan->currentPage() - 1) * $kunjungan->perPage() + $i + 1, 2, '0', STR_PAD_LEFT) }}</td>
+                    <td>
+                        <div style="font-weight:600;font-size:13px">{{ $tamu->nama_tamu }}</div>
+                        <div style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:4px;margin-top:2px">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:12px;height:12px;opacity:.7"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" /></svg>
+                            {{ $tamu->no_wa }}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-size:12px;color:var(--text-muted)">{{ $tamu->instansi }}</div>
+                        @if($tamu->kategori)
+                        <span class="tag" style="background:{{ $tamu->kategori->warna }}22;color:{{ $tamu->kategori->warna }};margin-top:3px;display:inline-block">
+                            {{ $tamu->kategori->nama_kategori }}
+                        </span>
+                        @endif
+                    </td>
+                    <td>
+                        @if($tamu->pegawaiTujuan)
+                        <div style="font-size:12px;font-weight:600">{{ $tamu->pegawaiTujuan->nama }}</div>
+                        <div style="font-size:11px;color:var(--text-muted)">{{ $tamu->pegawaiTujuan->jabatan }}</div>
+                        @else
+                        <span style="color:var(--text-muted)">—</span>
+                        @endif
+                    </td>
+                    <td style="font-size:12px;max-width:160px">{{ $tamu->tujuan_kunjungan }}</td>
+                    <td style="font-size:12px;white-space:nowrap">{{ $tamu->jam_masuk->format('d/m H:i') }}</td>
+                    <td style="font-size:12px;color:var(--text-muted);white-space:nowrap">{{ $tamu->jam_pulang ? $tamu->jam_pulang->format('H:i') : '—' }}</td>
+                    <td style="font-size:12px;color:var(--text-muted)">{{ $tamu->jam_pulang ? $tamu->durasi : '—' }}</td>
+                    <td>
+                        @if($tamu->status === 'Menunggu')
+                            <span class="badge badge-menunggu"><span class="badge-dot"></span>{{ $tamu->status }}</span>
+                        @elseif($tamu->status === 'Sedang Ditemui')
+                            <span class="badge badge-ditemui"><span class="badge-dot"></span>Ditemui</span>
+                        @else
+                            <span class="badge badge-selesai"><span class="badge-dot"></span>{{ $tamu->status }}</span>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:48px">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" style="width:40px;height:40px;opacity:.2;margin:0 auto 10px;display:block"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                    Tidak ada data untuk filter ini.
+                </td></tr>
+                @endforelse
+            </tbody>
+        </table>
+        <div class="pagination-info">Menampilkan {{ $kunjungan->firstItem() ?? 0 }}–{{ $kunjungan->lastItem() ?? 0 }} dari {{ $kunjungan->total() }} kunjungan</div>
+        <div class="pagination">{{ $kunjungan->links() }}</div>
+    </div>
+</div>
+
+<!-- TAB 2: GRAFIK & ANALISIS -->
+<div id="chart-tab" class="tab-pane" style="display:none">
+    <div class="grid-2">
+        <div class="card mb-6" style="padding:24px">
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:16px; font-family:'Bricolage Grotesque',sans-serif; color:var(--text)">Trend Kunjungan Harian</h3>
+            <div style="height:260px; position:relative">
+                <canvas id="chart-trend"></canvas>
+            </div>
+        </div>
+        <div class="card mb-6" style="padding:24px">
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:16px; font-family:'Bricolage Grotesque',sans-serif; color:var(--text)">Distribusi Kategori Tamu</h3>
+            <div style="height:260px; position:relative">
+                <canvas id="chart-kategori"></canvas>
+            </div>
+        </div>
+        <div class="card mb-6" style="padding:24px">
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:16px; font-family:'Bricolage Grotesque',sans-serif; color:var(--text)">Jam Kedatangan Terpadat (07:00 - 17:00)</h3>
+            <div style="height:260px; position:relative">
+                <canvas id="chart-jam"></canvas>
+            </div>
+        </div>
+        <div class="card mb-6" style="padding:24px">
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:16px; font-family:'Bricolage Grotesque',sans-serif; color:var(--text)">Staf Paling Sering Dikunjungi (Top 5)</h3>
+            <div style="height:260px; position:relative">
+                <canvas id="chart-pegawai"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Load data from PHP
+    const kategoriData = @json($kategoriStats);
+    const trendData = @json($trendStats);
+    const jamData = @json($jamStats);
+    const pegawaiData = @json($pegawaiStats);
+
+    let chartsInitialized = false;
+
+    function switchTab(tabId) {
+        // Hide all panes
+        document.querySelectorAll('.tab-pane').forEach(el => el.style.display = 'none');
+        // Show active pane
+        document.getElementById(tabId).style.display = 'block';
+
+        // Update button visual styles
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.style.color = 'var(--text-muted)';
+            btn.style.borderBottomColor = 'transparent';
+        });
+
+        const activeBtn = tabId === 'table-tab' ? document.getElementById('btn-table') : document.getElementById('btn-chart');
+        activeBtn.style.color = 'var(--text)';
+        activeBtn.style.borderBottomColor = 'var(--primary)';
+
+        if (tabId === 'chart-tab') {
+            initCharts();
+        }
+    }
+
+    function initCharts() {
+        if (chartsInitialized) return;
+        chartsInitialized = true;
+
+        // 1. Chart Kategori (Doughnut)
+        const ctxKategori = document.getElementById('chart-kategori').getContext('2d');
+        new Chart(ctxKategori, {
+            type: 'doughnut',
+            data: {
+                labels: kategoriData.map(d => d.nama_kategori),
+                datasets: [{
+                    data: kategoriData.map(d => d.total),
+                    backgroundColor: kategoriData.map(d => d.warna || '#71717A'),
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'right',
+                        labels: {
+                            font: { family: 'Plus Jakarta Sans', size: 11 },
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 2. Chart Trend Kunjungan Harian (Line)
+        const ctxTrend = document.getElementById('chart-trend').getContext('2d');
+        new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: trendData.map(d => {
+                    const date = new Date(d.tanggal);
+                    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                }),
+                datasets: [{
+                    label: 'Jumlah Kunjungan',
+                    data: trendData.map(d => d.total),
+                    borderColor: '#FF6B00',
+                    backgroundColor: 'rgba(255, 107, 0, 0.08)',
+                    fill: true,
+                    tension: 0.3,
+                    borderWidth: 2,
+                    pointBackgroundColor: '#FF6B00',
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'Plus Jakarta Sans', size: 10 } }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, font: { family: 'Plus Jakarta Sans', size: 10 } }
+                    }
+                }
+            }
+        });
+
+        // 3. Chart Jam Terpadat (Bar)
+        const ctxJam = document.getElementById('chart-jam').getContext('2d');
+        const hoursLabels = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0') + ':00');
+        const hoursValues = Array(24).fill(0);
+        jamData.forEach(d => {
+            hoursValues[parseInt(d.jam)] = d.total;
+        });
+
+        // Slice office hours (07:00 - 17:00)
+        const startHour = 7;
+        const endHour = 17;
+        const filteredLabels = hoursLabels.slice(startHour, endHour + 1);
+        const filteredValues = hoursValues.slice(startHour, endHour + 1);
+
+        new Chart(ctxJam, {
+            type: 'bar',
+            data: {
+                labels: filteredLabels,
+                datasets: [{
+                    label: 'Jumlah Tamu',
+                    data: filteredValues,
+                    backgroundColor: '#049EFF',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'Plus Jakarta Sans', size: 10 } }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, font: { family: 'Plus Jakarta Sans', size: 10 } }
+                    }
+                }
+            }
+        });
+
+        // 4. Chart Pegawai Terpopuler (Horizontal Bar)
+        const ctxPegawai = document.getElementById('chart-pegawai').getContext('2d');
+        new Chart(ctxPegawai, {
+            type: 'bar',
+            data: {
+                labels: pegawaiData.map(d => d.nama.split(',')[0]), // Shorten titles
+                datasets: [{
+                    label: 'Kunjungan',
+                    data: pegawaiData.map(d => d.total),
+                    backgroundColor: '#16A34A',
+                    borderRadius: 6,
+                    barThickness: 16
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, font: { family: 'Plus Jakarta Sans', size: 10 } }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'Plus Jakarta Sans', size: 11 } }
+                    }
+                }
+            }
+        });
+    }
+</script>
+@endpush

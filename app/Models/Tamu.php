@@ -11,7 +11,7 @@ class Tamu extends Model
     protected $table = 'tamu';
     protected $fillable = [
         'nama_tamu', 'instansi', 'no_wa', 'kategori_id',
-        'tujuan_kunjungan', 'detail_keperluan', 'bertemu_dengan', 'handled_by',
+        'tujuan_kunjungan', 'detail_keperluan', 'sudah_janji', 'bertemu_dengan', 'handled_by',
         'jam_masuk', 'jam_pulang', 'status', 'wa_sent_at',
     ];
 
@@ -19,6 +19,7 @@ class Tamu extends Model
         'jam_masuk'   => 'datetime',
         'jam_pulang'  => 'datetime',
         'wa_sent_at'  => 'datetime',
+        'sudah_janji' => 'boolean',
     ];
 
     public function kategori(): BelongsTo

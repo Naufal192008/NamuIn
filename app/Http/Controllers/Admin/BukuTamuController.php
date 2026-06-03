@@ -43,12 +43,16 @@ class BukuTamuController extends Controller
             'tujuan_kunjungan' => 'required|string|max:150',
             'bertemu_dengan'   => 'nullable|exists:pegawai,id',
             'detail_keperluan' => 'nullable|string|max:500',
+            'sudah_janji'      => 'nullable|boolean',
         ]);
 
         Tamu::create($request->only([
             'nama_tamu', 'instansi', 'no_wa', 'kategori_id',
             'tujuan_kunjungan', 'bertemu_dengan', 'detail_keperluan',
-        ]) + ['status' => 'Menunggu']);
+        ]) + [
+            'sudah_janji' => $request->boolean('sudah_janji'),
+            'status' => 'Menunggu'
+        ]);
 
         return back()->with('success', 'Data kunjungan berhasil ditambahkan.');
     }
